@@ -5,6 +5,8 @@ import { useContext, useState } from "react";
 import { SearchContext } from "../../context/SearchContext";
 import useFetch from "../../hooks/useFetch";
 import "./Reserve.css";
+import { useNavigate } from "react-router-dom";
+
 
 const Reserve = ({ setOpen, hotelId }) => {
   const { data, loading, errorr } = useFetch(`/hotels/room/${hotelId}`);
@@ -43,14 +45,21 @@ const Reserve = ({ setOpen, hotelId }) => {
     );
   };
 
-  const handleClick = async() => {
-      try {
-          await Promise.all(selectedRooms.map(roomId)=>{
-              const res=axios.put("")
-          })
-      } catch (error) {
-          
-      }
+  const navigate = useNavigate();
+
+  const handleClick = async () => {
+    try {
+      await Promise.all(
+        selectedRooms.map((roomId) => {
+          const res = axios.put(`/rooms/availability/${roomId}`, {
+            dates: allDates,
+          });
+          return res.data;
+        })
+      );
+      setOpen(false);
+      navigate("/");
+    } catch (error) {}
   };
 
   return (
